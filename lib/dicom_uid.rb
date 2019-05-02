@@ -31,7 +31,7 @@ class DicomUID
 
 
   # set default values, with org_root if needed
-  def random_dicom_uid org_root = '', size = 64
+  def self.random_dicom_uid org_root = '', size = 64
     org_root << '.' if !org_root.empty? and org_root[-1] != '.'
     return rand_duid org_root, size
   end
