@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
     s.name        = 'Dicom_UID'
-    s.version     = '0.0.1'
+    s.version     = '0.0.2'
     s.date        = '2019-05-08'
     s.summary     = "4027613897609896144885579817926891251.445655382004259.49.58879.6"
     s.description = "Generates random uid for DICOM files"
