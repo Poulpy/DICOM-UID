@@ -18,7 +18,7 @@ class DicomUID
 
 
   # Generates random component with random, defined, length
-  def random_component length = 64, odd_byte_boundary
+  def random_component length, odd_byte_boundary
 
     # randing length of number
     length_component = length - 1
@@ -41,15 +41,15 @@ class DicomUID
 
 
   # Generate recursively a random dicom uid
-  def rand_duid uid = '', remain
-    comp = self.random_component remain
+  def rand_duid uid, remain, obb
+    comp = random_component remain, obb
     remain -= comp.length
     uid << comp
 
     return uid if remain <= 0
 
     uid << '.'
-    self.rand_duid uid, remain - 1
+    rand_duid uid, remain - 1, obb
   end
 
 
@@ -58,8 +58,12 @@ class DicomUID
   def random_dicom_uid org_root, fixed_size, odd_byte_boundary = true
 
     # building the org root
-    org_root ||= random_component# UID needs at least an org root
+    org_root = random_component(64, odd_byte_boundary) if org_root.empty?# UID needs at least an org root
     raise LeadingZeroError if org_root[0] == '0' and org_root.length != 1
+    puts org_root
+    puts org_root[-2].to_i % 2 == 1
+    puts org_root[-1] != 0
+    puts odd_byte_boundary
     raise OddByteError if org_root[-2].to_i % 2 == 1 and org_root[-1] != 0 and odd_byte_boundary
     org_root << '.' if org_root[-1] != '.'
 
@@ -70,7 +74,7 @@ class DicomUID
     raise RangeError("Size of UID can't be negative") if fixed_size < 0
 
     # building the suffix
-    self.rand_duid org_root, (fixed_size - org_root.length), odd_byte_boundary
+    rand_duid org_root, (fixed_size - org_root.length), odd_byte_boundary
   end
 
 end
