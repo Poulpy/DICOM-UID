@@ -5,20 +5,33 @@
 # <org>.<suffix>
 class DicomUID
 
+  attr_accessor :uid, :name
+
+  def initialize name
+    @uid = random_dicom_uid '', nil
+    @name = name
+  end
+
+  def to_s
+    'UID : ' << @uid << ' NAME : ' << @name
+  end
+
 
   # Generates random component with random, defined, length
-  def self.random_component length = 64
+  def random_component length = 64, odd_byte_boundary
+
     # randing length of number
     length_component = length - 1
     loop do
-        srand
-        length_component = rand(0..length)
-        break if length_component != length - 1 and length_component != 0
+      srand
+      length_component = rand(0..length)
+      break if length_component != length - 1 and length_component != 0
     end
 
     # randing the component
     component = (rand ('9' * length_component).to_i).to_s
-    if component[-1].to_i % 2 == 1# if odd number
+
+    if odd_byte_boundary and component[-1].to_i % 2 == 1# if odd number
       component << 'O'
       component = component[1..-1]# removing first int
     end
@@ -28,7 +41,7 @@ class DicomUID
 
 
   # Generate recursively a random dicom uid
-  def self.rand_duid uid = '', remain
+  def rand_duid uid = '', remain
     comp = self.random_component remain
     remain -= comp.length
     uid << comp
@@ -42,16 +55,22 @@ class DicomUID
 
   # set default values, with org_root if needed
   # the size of the UID is randomized
-  def self.random_dicom_uid org_root, fixed_size
+  def random_dicom_uid org_root, fixed_size, odd_byte_boundary = true
+
     # building the org root
     org_root ||= random_component# UID needs at least an org root
     raise LeadingZeroError if org_root[0] == '0' and org_root.length != 1
-    raise OddByteError if org_root[-2].to_i % 2 == 1 and org_root[-1] != 0
+    raise OddByteError if org_root[-2].to_i % 2 == 1 and org_root[-1] != 0 and odd_byte_boundary
     org_root << '.' if org_root[-1] != '.'
+
     srand
     fixed_size ||= rand 64
+
+    raise OversizedUIDError if fixed_size > 64
+    raise RangeError("Size of UID can't be negative") if fixed_size < 0
+
     # building the suffix
-    return self.rand_duid org_root, (fixed_size - org_root.length)
+    self.rand_duid org_root, (fixed_size - org_root.length), odd_byte_boundary
   end
 
 end
