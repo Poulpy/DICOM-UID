@@ -129,14 +129,20 @@ class DicomUIDTest < Minitest::Test
   end
 
   def test_random_dicom_uid_with_dot
-    DicomUID.random_dicom_uid '54.', 64
-    puts 'je passe'
-    DicomUID.random_dicom_uid '54', 64
-    puts 'je passe'
-    DicomUID.random_dicom_uid 54, 64
-    puts 'je passe'
+    d = DicomUID.random_dicom_uid '54.', 64
+    # puts 'L > ' << d.length.to_s
+    # puts d
+    # puts 'je passe'
+    d2 = DicomUID.random_dicom_uid '54', 64
+    # puts 'L > ' << d2.length.to_s
+    # puts d2
+    # puts 'je passe'
+    d3 = DicomUID.random_dicom_uid 54, 64
+    # puts 'L > ' << d3.length.to_s
+    # puts d3
+    # puts 'je passe'
 
-    DicomUID.random_dicom_uid '54.', 61
+    # puts (DicomUID.random_dicom_uid '54.', 61).length.to_s
   end
 
 

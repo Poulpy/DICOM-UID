@@ -22,17 +22,20 @@ module DicomUID#:nodoc:
     raise OversizedUIDError if length > 62
 
     # randing length of number
-    length_component = length - 1
-    loop do
+    length_component = 0
+    while (length_component == length - 1) or length_component == 0
       srand
       length_component = rand 0..length
-      break if length_component != length - 1 and length_component != 0
     end
 
     # randing the component
-    component = (rand ('9' * length_component).to_i).to_s
+    component = '9' * (length - 1)
+    while component.length == length - 1
+      component = (rand ('9' * length_component).to_i).to_s
+    end
 
-    if odd_byte_boundary and component[-1].to_i % 2 == 1# if odd number
+
+    if odd_byte_boundary and !odd_byte_rule component# if odd number
       component << 'O'
       component = component[1..-1]# removing first int
     end
@@ -55,16 +58,14 @@ module DicomUID#:nodoc:
     # building the org root
     org_root = self.random_component(62, odd_byte_boundary) if org_root.empty?# UID needs at least an org root
     raise LeadingZeroError if org_root[0] == '0' and org_root.length != 1
-    puts 'ORG : ' << org_root
     raise OddByteError if !odd_byte_rule(org_root) and odd_byte_boundary
 
     # if the fixed size doesn't exist, a random one is created, but
     # it must be generated so that the UID musn't be above 64 chars
     fixed_size ||= rand(0..(64 - org_root.length - 1))
-    fixed_size -= org_root.length
     fixed_size -= 1 if add_missing_dot org_root
 
-    raise OversizedUIDError if fixed_size > 64 or fixed_size + org_root.length > 64
+    raise OversizedUIDError if fixed_size > 64
     raise RangeError("Size of UID can't be negative") if fixed_size < 0
 
     # building the suffix
@@ -91,8 +92,6 @@ module DicomUID#:nodoc:
   def self.rand_duid uid, remain, obb = true
 
     # Exceptions
-    raise TypeError unless uid.is_a? String and remain.is_a? Integer and obb == !!obb
-    remain -= 1 if add_missing_dot uid
     raise OversizedUIDError if uid.length > 64 or (uid.length + remain > 64)
     raise RangeError, "Remaining characters can't be negative or null" if remain <= 0
 
