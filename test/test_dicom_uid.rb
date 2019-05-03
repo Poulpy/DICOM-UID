@@ -41,7 +41,6 @@ class DicomUIDTest < Minitest::Test
   def test_random_component_maximum_size
     r = rand 62
     d = DicomUID.random_component(r)
-    puts 'UID L : ' << d.length.to_s << ' RAND : ' << r.to_s
     assert d.length <= r
   end
 
@@ -107,12 +106,11 @@ class DicomUIDTest < Minitest::Test
   # random_dicom_uid
 
   def test_random_dicom_uid_arguments
-    skip
     assert_raises TypeError do
       DicomUID.random_dicom_uid true, 45
     end
     assert_raises TypeError do
-      DicomUID.random_dicom_uid 45, '654'
+      DicomUID.random_dicom_uid 42, '654'
     end
     assert_raises TypeError do
       DicomUID.random_dicom_uid 54, 45, 45
@@ -120,29 +118,28 @@ class DicomUIDTest < Minitest::Test
     assert_raises LeadingZeroError do
       DicomUID.random_dicom_uid '054', 45
     end
-    assert_raises OversizedUIDError do
-      DicomUID.random_dicom_uid 46556465, 60
+    assert_raises RangeError do
+      DicomUID.random_dicom_uid 4655555555555555554444444444444444444456462, 10
     end
     assert_raises OddByteError do
-      DicomUID.random_dicom_uid 46556430, 20
+      DicomUID.random_dicom_uid 4655643, 20
     end
   end
 
   def test_random_dicom_uid_with_dot
-    d = DicomUID.random_dicom_uid '54.', 64
-    # puts 'L > ' << d.length.to_s
-    # puts d
-    # puts 'je passe'
-    d2 = DicomUID.random_dicom_uid '54', 64
-    # puts 'L > ' << d2.length.to_s
-    # puts d2
-    # puts 'je passe'
-    d3 = DicomUID.random_dicom_uid 54, 64
-    # puts 'L > ' << d3.length.to_s
-    # puts d3
-    # puts 'je passe'
+    DicomUID.random_dicom_uid '54.', 64
+    DicomUID.random_dicom_uid '54', 64
+    DicomUID.random_dicom_uid 54, 64
+  end
 
-    # puts (DicomUID.random_dicom_uid '54.', 61).length.to_s
+
+  def test_random_dicom_uid
+    len = rand 3..64
+    a = DicomUID.random_uids '45.', len, 5, true
+    # check size
+    a.each do |e|
+      assert e.length == len
+    end
   end
 
 

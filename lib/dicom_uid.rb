@@ -57,7 +57,7 @@ module DicomUID#:nodoc:
 
     # building the org root
     org_root = self.random_component(62, odd_byte_boundary) if org_root.empty?# UID needs at least an org root
-    raise LeadingZeroError if org_root[0] == '0' and org_root.length != 1
+    raise LeadingZeroError if leading_zero? org_root
     raise OddByteError if !odd_byte_rule(org_root) and odd_byte_boundary
 
     # if the fixed size doesn't exist, a random one is created, but
@@ -66,7 +66,8 @@ module DicomUID#:nodoc:
     fixed_size -= 1 if add_missing_dot org_root
 
     raise OversizedUIDError if fixed_size > 64
-    raise RangeError("Size of UID can't be negative") if fixed_size < 0
+    raise RangeError, 'Size of Org root larger than size provided' if fixed_size < org_root.length
+    raise RangeError, "Size of UID can't be negative" if fixed_size < 0
 
     # building the suffix
     self.rand_duid org_root, (fixed_size - org_root.length), odd_byte_boundary
@@ -74,11 +75,12 @@ module DicomUID#:nodoc:
 
 
 
+  # Return an array of UIDs, from a common org root
   def self.random_uids org_root, fixed_size, array_size, odd_byte_boundary = true
-    uids = Array.new
+    uids = Array.new array_size
 
-    array_size.times do
-      uids << (self.random_dicom_uid org_root, fixed_size, odd_byte_boundary)
+    array_size.times do |i|
+      uids[i] = (self.random_dicom_uid org_root.dup, fixed_size, odd_byte_boundary)
     end
 
     uids
@@ -126,6 +128,11 @@ end
 def odd_byte_rule comp
   return comp[-1].to_i % 2 == 0 || (comp[-2].to_i % 2 == 1 && comp[-1].to_i == 0) if comp.length != 1
   comp[-1].to_i % 2 == 0
+end
+
+
+def leading_zero? org_root
+  org_root[0] == '0' and org_root.length != 1
 end
 
 
