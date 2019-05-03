@@ -12,6 +12,8 @@ class DicomUIDTest < Minitest::Test
   end
 
 
+  # random_component
+
   def test_random_component_is_string
     assert_kind_of String, @p_true
     assert_kind_of String, @p_false
@@ -38,7 +40,9 @@ class DicomUIDTest < Minitest::Test
 
   def test_random_component_maximum_size
     r = rand 62
-    assert DicomUID.random_component(r).length <= r
+    d = DicomUID.random_component(r)
+    puts 'UID L : ' << d.length.to_s << ' RAND : ' << r.to_s
+    assert d.length <= r
   end
 
 
@@ -62,51 +66,80 @@ class DicomUIDTest < Minitest::Test
 
   # randuid
 
-  def test_randuid_arguments
-    assert_raises TypeError do
-      DicomUID.rand_duid 2, 2, true
-    end
-    assert_raises TypeError do
-      DicomUID.rand_duid '2', '5', true
-    end
-    assert_raises TypeError do
-      DicomUID.rand_duid '2', 2, 2
-    end
-  end
-
-  def test_rand_duid_size_error
-    assert_raises OversizedUIDError do
-      DicomUID.rand_duid '', 65
-    end
-    assert_raises OversizedUIDError do
-      DicomUID.rand_duid '65465', 63
-    end
-    assert_raises RangeError do
-      DicomUID.rand_duid '35463.', -2
-    end
-  end
-
-
-
-
-  # @n_true = DicomUID.random_component -2, true
-  # @n_false = DicomUID.random_component -2, false
-
-
-
-  # d = DicomUID.random_component length, true
-  # puts d
-  # puts 'EXPECTED MAX LENGTH : ' << length.to_s << ' - LENGTH : ' << d.length.to_s
-  # d2 = DicomUID.random_component
-  # puts d2
-  # puts 'EXPECTED MAX LENGTH : 64 - LENGTH : ' << d2.length.to_s
-
-
-
-  # def test_initialize
-  #   d = DicomUID.new 'StudyUID'
-  #   puts d.to_s
+  # def test_randuid_arguments
+  #   assert_raises TypeError do
+  #     DicomUID.rand_duid 2, 2, true
+  #   end
+  #   assert_raises TypeError do
+  #     DicomUID.rand_duid '2', '5', true
+  #   end
+  #   assert_raises TypeError do
+  #     DicomUID.rand_duid '2', 2, 2
+  #   end
   # end
+
+  # def test_rand_duid_size_error
+  #   assert_raises OversizedUIDError do
+  #     DicomUID.rand_duid '', 65
+  #   end
+  #   assert_raises OversizedUIDError do
+  #     DicomUID.rand_duid '65465', 63
+  #   end
+  #   assert_raises RangeError do
+  #     DicomUID.rand_duid '35463.', -2
+  #   end
+  # end
+
+  # def test_rand_duid_check_size
+  #   100.times do
+  #   size = rand 3..64
+  #   comp = (DicomUID.random_component size - 2) << '.'
+  #   puts '----'
+  #   puts size.to_s
+  #   puts comp.length.to_s
+  #   puts (size - comp.length).to_s
+  #   uid = DicomUID.rand_duid comp, size - comp.length
+  #   puts uid.length.to_s
+  #   assert uid.length == size
+  #   end
+  # end
+
+  # random_dicom_uid
+
+  def test_random_dicom_uid_arguments
+    skip
+    assert_raises TypeError do
+      DicomUID.random_dicom_uid true, 45
+    end
+    assert_raises TypeError do
+      DicomUID.random_dicom_uid 45, '654'
+    end
+    assert_raises TypeError do
+      DicomUID.random_dicom_uid 54, 45, 45
+    end
+    assert_raises LeadingZeroError do
+      DicomUID.random_dicom_uid '054', 45
+    end
+    assert_raises OversizedUIDError do
+      DicomUID.random_dicom_uid 46556465, 60
+    end
+    assert_raises OddByteError do
+      DicomUID.random_dicom_uid 46556430, 20
+    end
+  end
+
+  def test_random_dicom_uid_with_dot
+    DicomUID.random_dicom_uid '54.', 64
+    puts 'je passe'
+    DicomUID.random_dicom_uid '54', 64
+    puts 'je passe'
+    DicomUID.random_dicom_uid 54, 64
+    puts 'je passe'
+
+    DicomUID.random_dicom_uid '54.', 61
+  end
+
+
 
 
   def test_maximum_size_not_nil

@@ -24,3 +24,5 @@ test/debug.log
 .bundle
 
 *.gem
+
+.vscode
