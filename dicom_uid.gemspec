@@ -1,14 +1,16 @@
 Gem::Specification.new do |s|
-    s.name        = 'Dicom_UID'
-    s.version     = '0.0.6'
-    s.date        = '2019-05-08'
-    s.summary     = "4027613897609896144885579817926891251.445655382004259.49.58879.6"
-    s.description = "Generates random uid for DICOM files"
-    s.authors     = ["Repain Paul"]
-    s.email       = 'paul.repain@yahoo.com'
-    s.files       = ["lib/dicom_uid.rb"]
-    s.homepage    =
-      'https://rubygems.org/gems/dicom_uid'
-    s.license     = 'MIT'
-    s.metadata    = { "source_code_uri" => "https://github.com/Poulpy/dicom_uid" }
-  end
+  s.name        = 'Dicom_UID'
+  s.version     = '0.0.7'
+  s.date        = '2019-05-03'
+  s.summary     = "Random DICOM UID generator"
+  s.description = "Generates random UID for DICOM files"
+  s.authors     = ["Repain Paul"]
+  s.email       = 'paul.repain@yahoo.com'
+  s.files       = ["lib/dicom_uid.rb"]
+  s.homepage    =
+    'https://rubygems.org/gems/Dicom_UID'
+  s.license     = 'MIT'
+  s.metadata    = { "source_code_uri" => "https://github.com/Poulpy/DICOM-UID" }
+  s.extra_rdoc_files = ['README.md']
+  s.post_install_message = "Thanks for installing!"
+end
