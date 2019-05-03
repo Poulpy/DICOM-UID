@@ -4,7 +4,7 @@
 # The UID looks like the following <org>.<suffix>
 # UID is composed of two main components, org and suffix. Components are separated by a dot and are only composed of decimals.
 # The UID must not be more than 64 characters, dots included.
-module DicomUID#:nodoc:
+module DicomUID
 
   # Maximum size of an UID
   MAXIMUM_SIZE = 64
