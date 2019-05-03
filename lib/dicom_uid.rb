@@ -15,9 +15,11 @@ module DicomUID
   # 1 character minimum and 62 characters maximum
   def self.random_component length = 62, odd_byte_boundary = true
 
+    # exceptions
+    raise TypeError unless length.is_a? Integer
+    raise TypeError unless odd_byte_boundary == !!odd_byte_boundary
     raise RangeError, "Length of a component cannot be negative or null" if length <= 0
     raise OversizedUIDError if length > 62
-
 
     # randing length of number
     length_component = length - 1
@@ -40,7 +42,15 @@ module DicomUID
 
 
   # Generates recursively a random dicom uid
-  def self.rand_duid uid, remain, obb
+  def self.rand_duid uid, remain, obb = true
+
+    raise TypeError unless uid.is_a? String and remain.is_a? Integer and obb == !!obb
+    remain -= 1 if add_missing_dot uid
+    raise OversizedUIDError if uid.length > 64 or (uid.length + remain > 64)
+    raise RangeError, "Remaining characters can't be negative or null" if remain <= 0
+
+
+
     comp = self.random_component remain, obb
     remain -= comp.length
     uid << comp
@@ -60,13 +70,15 @@ module DicomUID
     org_root = self.random_component(62, odd_byte_boundary) if org_root.empty?# UID needs at least an org root
     raise LeadingZeroError if org_root[0] == '0' and org_root.length != 1
     raise OddByteError if org_root[-2].to_i % 2 == 1 and org_root[-1] != 0 and odd_byte_boundary
-    org_root << '.' if org_root[-1] != '.'
+
 
     srand
     fixed_size ||= rand 64
 
     raise OversizedUIDError if fixed_size > 62
     raise RangeError("Size of UID can't be negative") if fixed_size < 0
+
+    fixed_size -= 1 if add_missing_dot org_root
 
     # building the suffix
     self.rand_duid org_root, (fixed_size - org_root.length), odd_byte_boundary
@@ -91,6 +103,18 @@ module DicomUID
 
 
 end
+
+
+def add_missing_dot comp
+  raise TypeError unless comp.is_a? String
+  if comp[-1] != '.'
+    comp << '.'
+    return true
+  end
+  false
+end
+
+
 
 # EXCEPTIONS
 
