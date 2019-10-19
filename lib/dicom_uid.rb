@@ -28,16 +28,21 @@ module DicomUID
       length_component = rand 0..length
     end
 
-    # randing the component
+    # randing the component: length
     component = '9' * (length - 1)
     while component.length == length - 1
       component = (rand ('9' * length_component).to_i).to_s
     end
 
 
+
     if odd_byte_boundary and !odd_byte_rule component# if odd number
+      puts 'a('
+      puts component
       component << '0'
       component = component[1..-1]# removing first int
+      puts component
+      puts 'b('
     end
 
     component

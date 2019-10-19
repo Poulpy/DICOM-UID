@@ -11,6 +11,14 @@ class DicomUIDTest < Minitest::Test
     @one_param = DicomUID.random_component 2
   end
 
+  def test_print
+    puts '> Test print'
+    puts DicomUID.random_dicom_uid '10.12.6.64', 60
+    puts DicomUID.random_dicom_uid '1.1.3.62', 30, false
+    puts DicomUID.random_dicom_uid '1.1.3.66', 64
+    puts DicomUID.random_dicom_uid '1.1.3.68', 64
+    puts '> End Test print'
+  end
 
   # random_component
 
