@@ -3,7 +3,6 @@ require 'dicom_uid'
 
 class DicomUIDTest < Minitest::Test
 
-
   def setup
     @p_true = DicomUID.random_component 2, true
     @p_false = DicomUID.random_component 2, false
@@ -11,7 +10,7 @@ class DicomUIDTest < Minitest::Test
     @one_param = DicomUID.random_component 2
   end
 
-  def test_print
+  def test_print_random_dicom_uid
     puts '> Test print'
     puts DicomUID.random_dicom_uid '10.12.6.64', 60
     puts DicomUID.random_dicom_uid '1.1.3.62', 30, false
@@ -21,6 +20,15 @@ class DicomUIDTest < Minitest::Test
   end
 
   # random_component
+
+  def test_print_random_component
+    puts '> Test print'
+    puts DicomUID.random_component 60
+    puts DicomUID.random_component 30, false
+    puts DicomUID.random_component 6
+    puts DicomUID.random_component 3
+    puts '> End Test print'
+  end
 
   def test_random_component_is_string
     assert_kind_of String, @p_true
@@ -38,7 +46,6 @@ class DicomUIDTest < Minitest::Test
     end
   end
 
-
   def test_random_component_not_nil
     assert @p_true != nil
     assert @p_false != nil
@@ -51,9 +58,6 @@ class DicomUIDTest < Minitest::Test
     d = DicomUID.random_component(r)
     assert d.length <= r
   end
-
-
-
 
   def test_random_component_with_negative_param
     assert_raises RangeError do
@@ -140,7 +144,6 @@ class DicomUIDTest < Minitest::Test
     DicomUID.random_dicom_uid 54, 64
   end
 
-
   def test_random_dicom_uid
     len = rand 3..64
     a = DicomUID.random_uids '45.', len, 5, true
@@ -148,13 +151,6 @@ class DicomUIDTest < Minitest::Test
     a.each do |e|
       assert e.length == len
     end
-  end
-
-
-
-
-  def test_maximum_size_not_nil
-    assert DicomUID::MAXIMUM_SIZE != nil
   end
 
 end
