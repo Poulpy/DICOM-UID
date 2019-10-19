@@ -37,12 +37,8 @@ module DicomUID
 
 
     if odd_byte_boundary and !odd_byte_rule component# if odd number
-      puts 'a('
-      puts component
       component << '0'
       component = component[1..-1]# removing first int
-      puts component
-      puts 'b('
     end
 
     component
