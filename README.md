@@ -5,7 +5,7 @@ Gem generating DICOM random UID
 
 ## Documentation
 
-![Here](https://poulpy.github.io/DICOM-UID/docs/)
+[Here](https://poulpy.github.io/DICOM-UID/docs/)
 
 
 ## Examples
